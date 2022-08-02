@@ -5,8 +5,6 @@ import { CacheProvider } from '@emotion/react';
 import createEmotionCache from '../src/createEmotionCache';
 import AppLayout from '../src/layout/AppLayout';
 import { SessionProvider } from "next-auth/react"
-import { useEffect } from 'react';
-import { useRouter } from 'next/router'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -17,15 +15,6 @@ export default function MyApp(props) {
     emotionCache = clientSideEmotionCache,
     pageProps: { session, ...pageProps }
   } = props;
-
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log("session", session);
-    if(!session){
-      router.push("/auth/signIn")
-    }
-  }, [session])  
 
   return (
     <SessionProvider session={session}>

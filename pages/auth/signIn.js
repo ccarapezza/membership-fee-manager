@@ -9,10 +9,8 @@ import Box from '@mui/material/Box';
 import CodeloIcon from '../../assets/icons/CodeloIcon';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { signIn } from "next-auth/react"
+import { getCsrfToken } from "next-auth/react"
 import 'animate.css';
-import { Container } from '@mui/system';
-import { LinearProgress } from '@mui/material';
 
 function Copyright(props) {
     return (
@@ -23,7 +21,7 @@ function Copyright(props) {
     );
 }
 
-export default function SignIn() {
+export default function SignIn({ csrfToken }) {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -67,7 +65,8 @@ export default function SignIn() {
                             Portal de Socios
                         </Typography>
                         <small>Cogollos del Oeste</small>
-                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                        <Box component="form" method="post" action="/api/auth/callback/credentials" noValidate sx={{ mt: 1 }}>
+                            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
                             <TextField
                                 margin="normal"
                                 required
@@ -115,3 +114,11 @@ export default function SignIn() {
         </>
     );
 }
+
+export async function getServerSideProps(context) {
+    return {
+      props: {
+        csrfToken: await getCsrfToken(context),
+      },
+    };
+  }

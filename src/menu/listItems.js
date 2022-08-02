@@ -7,7 +7,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { signOut } from "next-auth/react"
 
 export const mainMenu = (
   <>
@@ -47,25 +48,13 @@ export const mainMenu = (
 export const secondaryMenu = (
   <>
     <ListSubheader component="div" inset>
-      Saved reports
+      Socios
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton onClick={() => signOut()}>
       <ListItemIcon>
-        <AssignmentIcon />
+        <LogoutIcon />
       </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
+      <ListItemText primary="Cerrar sesión" />
     </ListItemButton>
   </>
 );
