@@ -50,7 +50,7 @@ export const secondaryMenu = (
     <ListSubheader component="div" inset>
       Socios
     </ListSubheader>
-    <ListItemButton onClick={() => signOut()}>
+    <ListItemButton onClick={()=>signOut({ callbackUrl: 'http://localhost:3000/' })}>
       <ListItemIcon>
         <LogoutIcon />
       </ListItemIcon>

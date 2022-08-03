@@ -4,12 +4,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
 import createEmotionCache from '../src/createEmotionCache';
 import AppLayout from '../src/layout/AppLayout';
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider, useSession } from "next-auth/react"
+import { Container } from '@mui/material';
+import Loading from '../src/Loading';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-export default function MyApp(props) {
+
+export default function App(props) {
   const {
     Component,
     emotionCache = clientSideEmotionCache,
@@ -22,17 +25,39 @@ export default function MyApp(props) {
         <Head>
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
-        <AppLayout>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <Component {...pageProps} />
-        </AppLayout>
+
+        {Component.auth ? (
+          <Auth>
+            <AppLayout>
+              <CssBaseline />
+              <Component {...pageProps} />
+            </AppLayout>
+          </Auth>
+        ) : (
+          <>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </>
+        )}
       </CacheProvider>
     </SessionProvider>
   );
 }
 
-MyApp.propTypes = {
+function Auth({ children }) {
+  // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
+  const { status } = useSession({ required: true })
+
+  if (status === "loading") {
+    return <Container maxWidth="sm" sx={{ display: "grid", height: "100vh", placeItems: "center" }}>
+      <Loading />
+    </Container>
+  }
+
+  return children
+}
+
+App.propTypes = {
   Component: PropTypes.elementType.isRequired,
   emotionCache: PropTypes.object,
   pageProps: PropTypes.object.isRequired,

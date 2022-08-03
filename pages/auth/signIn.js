@@ -9,28 +9,37 @@ import Box from '@mui/material/Box';
 import CodeloIcon from '../../assets/icons/CodeloIcon';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { getCsrfToken } from "next-auth/react"
+import { getCsrfToken, getProviders, getSession, signIn, useSession } from "next-auth/react"
 import 'animate.css';
+import Copyright from '../../src/Copyright';
+import { useState } from 'react';
+import { Alert, Snackbar } from '@mui/material';
+import { useRouter } from 'next/router';
+import Loading from '../../src/Loading';
 
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            Copyright © Cogollos del Oeste
-            {" "+new Date().getFullYear()}
-        </Typography>
-    );
-}
 
 export default function SignIn({ csrfToken }) {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-        signIn();
-    };
+    const { status } = useSession();
+    const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const router = useRouter();
+
+    const handleLogin = async () => {
+        setLoading(true);
+        setErrorMessage("");
+
+        const data = await signIn('credentials', { email, password, redirect: false });
+        if(data.status === 200){
+            router.push(`${window.location.origin}/dashboard`)
+        }else if(data.status === 401){
+            setErrorMessage("Usuario y/o contraseñas incorrectos.")
+        }else{
+            setErrorMessage("ERROR "+data.status+": Contáctese con el administrador.")
+        }
+        setLoading(false);
+    }
 
     return (
         <>
@@ -60,65 +69,92 @@ export default function SignIn({ csrfToken }) {
                             alignItems: 'center',
                         }}
                     >
-                        <CodeloIcon/>
-                        <Typography component="h1" variant="h5">
-                            Portal de Socios
-                        </Typography>
-                        <small>Cogollos del Oeste</small>
-                        <Box component="form" method="post" action="/api/auth/callback/credentials" noValidate sx={{ mt: 1 }}>
-                            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Recordar"
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
-                                Ingresar
-                            </Button>
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
-                                        Olvidaste tu contraseña?
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                            <Copyright sx={{ mt: 5 }} />
-                        </Box>
+                        {loading||status!=="unauthenticated"?
+                            <Loading/>
+                            :
+                            <>
+                                <CodeloIcon />
+                                <Typography component="h1" variant="h5">
+                                    Portal de Socios
+                                </Typography>
+                                <small>Cogollos del Oeste</small>
+                                <Box sx={{ mt: 1 }}>
+                                    <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="email"
+                                        label="Email"
+                                        name="email"
+                                        autoComplete="email"
+                                        autoFocus
+                                        value={email}
+                                        error={errorMessage?true:false}
+                                        onChange={(e) => { setEmail(e?.target?.value) }}
+                                    />
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        name="password"
+                                        label="Password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
+                                        value={password}
+                                        error={errorMessage?true:false}
+                                        onChange={(e) => { setPassword(e?.target?.value) }}
+                                    />
+                                    <FormControlLabel
+                                        control={<Checkbox value="remember" color="primary" />}
+                                        label="Recordar"
+                                    />
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        sx={{ mt: 3, mb: 2 }}
+                                        onClick={() => { handleLogin() }}
+                                    >
+                                        Ingresar
+                                    </Button>
+                                    <Grid container>
+                                        <Grid item xs>
+                                            <Link href="#" variant="body2">
+                                                Olvidaste tu contraseña?
+                                            </Link>
+                                        </Grid>
+                                    </Grid>
+                                    <Copyright sx={{ mt: 5 }} />
+                                </Box>
+                            </>
+                        }
                     </Box>
                 </Grid>
             </Grid>
+            <Snackbar open={errorMessage?true:false} onClose={()=>setErrorMessage("")} autoHideDuration={6000} anchorOrigin={{ vertical:"bottom", horizontal:"right" }}>
+                <Alert severity="error">
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
 
 export async function getServerSideProps(context) {
+    const { req } = context;
+    const session = await getSession({ req });
+
+    if (session) {
+        return {
+            redirect: { destination: "/" },
+        };
+    }
+
     return {
-      props: {
-        csrfToken: await getCsrfToken(context),
-      },
+        props: {
+            providers: await getProviders(context),
+            csrfToken: await getCsrfToken(context),
+        },
     };
-  }
+}

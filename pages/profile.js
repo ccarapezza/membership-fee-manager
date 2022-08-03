@@ -37,3 +37,5 @@ export default function Profile() {
 
   );
 }
+
+Profile.auth = true

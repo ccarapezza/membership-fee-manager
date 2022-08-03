@@ -6,7 +6,8 @@ const options = {
     providers: [
         CredentialsProvider({
             // The name to display on the sign in form (e.g. 'Sign in with...')
-            name: 'Email and Password',
+            id: 'credentials',
+            name: 'Credentials',
             type: "credentials",
             credentials: {
                 email: { label: "Email", type: "text", placeholder: "jsmith" },
@@ -26,8 +27,8 @@ const options = {
                     // If you return null or false then the credentials will be rejected
                     //return Promise.resolve(null)
                     // You can also Reject this callback with an Error or with a URL:
-                     return Promise.reject(new Error('error message')) // Redirect to error page
-                    // return Promise.reject('/path/to/redirect')        // Redirect to a URL
+                    // return Promise.reject(new Error('error message')) // Redirect to error page
+                    return Promise.reject('/auth/signIn')        // Redirect to a URL
                 }
             },
             callbacks: {
@@ -40,7 +41,7 @@ const options = {
             pages: {
                 signIn: '/auth/signIn',
                 signOut: '/auth/signIn',
-                error: '/auth/signIn'
+                error: '/errorcito'
             }
         }),
     ],

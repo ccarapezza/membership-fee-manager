@@ -14,9 +14,11 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mainMenu, secondaryMenu } from '../menu/listItems';
 import { useSession, signOut } from "next-auth/react"
+import { useRouter } from 'next/router';
+import Loading from '../Loading';
 
 function Copyright(props) {
     return (
@@ -79,18 +81,22 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-export default function AppLayout({children}) {
+export default function AppLayout({ children }) {
     const [open, setOpen] = useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
     };
+    
+    const { data: session, status } = useSession();
+    const router = useRouter();
 
-    const { data: session } = useSession()
-    if (session) {
-        /*
-            Signed in as {session.user.email} <br />
-            <button onClick={() => signOut()}>Sign out</button>
-        */
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/auth/signIn")
+        }
+    }, [status]);
+
+    if (status === "authenticated") {
         return (<>
             <ThemeProvider theme={mdTheme}>
                 <Box sx={{ display: 'flex' }}>
@@ -172,7 +178,14 @@ export default function AppLayout({children}) {
     } else {
         return (
             <ThemeProvider theme={mdTheme}>
-                {children}
+                {status === "loading" ?
+                    <Container maxWidth="sm" sx={{ display: "grid", height: "100vh", placeItems: "center" }}>
+                        <Loading />
+                    </Container>
+                    :
+                    <>{children}</>
+
+                }
             </ThemeProvider>
         );
     }
