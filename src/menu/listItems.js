@@ -3,12 +3,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { signOut } from "next-auth/react"
+import { Badge, Event, MonetizationOn, Receipt } from '@mui/icons-material';
+import { Divider } from '@mui/material';
 
 export const mainMenu = (
   <>
@@ -20,36 +18,29 @@ export const mainMenu = (
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <MonetizationOn />
       </ListItemIcon>
-      <ListItemText primary="Orders" />
+      <ListItemText primary="Resumen de Cuenta" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <PeopleIcon />
+        <Receipt />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="Recibos" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <BarChartIcon />
+        <Badge />
       </ListItemIcon>
-      <ListItemText primary="Reports" />
+      <ListItemText primary="Credencial" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <LayersIcon />
+        <Event />
       </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Eventos" />
     </ListItemButton>
-  </>
-);
-
-export const secondaryMenu = (
-  <>
-    <ListSubheader component="div" inset>
-      Socios
-    </ListSubheader>
+    <Divider sx={{ my: 1 }} />
     <ListItemButton onClick={()=>signOut({ callbackUrl: 'http://localhost:3000/' })}>
       <ListItemIcon>
         <LogoutIcon />

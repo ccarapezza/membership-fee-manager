@@ -45,4 +45,5 @@ export default function Dashboard() {
   );
 }
 
-Dashboard.auth = true
+Dashboard.pageTitle = "Dashboard";
+Dashboard.auth = true;

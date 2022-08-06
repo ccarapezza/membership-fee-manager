@@ -7,6 +7,7 @@ import AppLayout from '../src/layout/AppLayout';
 import { SessionProvider, useSession } from "next-auth/react"
 import { Container } from '@mui/material';
 import Loading from '../src/Loading';
+import "../styles/globals.css";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -28,7 +29,7 @@ export default function App(props) {
 
         {Component.auth ? (
           <Auth>
-            <AppLayout>
+            <AppLayout pageTitle={Component.pageTitle}>
               <CssBaseline />
               <Component {...pageProps} />
             </AppLayout>

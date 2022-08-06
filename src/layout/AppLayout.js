@@ -15,8 +15,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useEffect, useState } from 'react';
-import { mainMenu, secondaryMenu } from '../menu/listItems';
-import { useSession, signOut } from "next-auth/react"
+import { mainMenu } from '../menu/listItems';
+import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import Loading from '../Loading';
 
@@ -81,7 +81,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-export default function AppLayout({ children }) {
+export default function AppLayout({ children, pageTitle }) {
     const [open, setOpen] = useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -126,7 +126,7 @@ export default function AppLayout({ children }) {
                                 noWrap
                                 sx={{ flexGrow: 1 }}
                             >
-                                Dashboard
+                                {pageTitle}
                             </Typography>
                             <IconButton color="inherit">
                                 <Badge badgeContent={4} color="secondary">
@@ -151,8 +151,6 @@ export default function AppLayout({ children }) {
                         <Divider />
                         <List component="nav">
                             {mainMenu}
-                            <Divider sx={{ my: 1 }} />
-                            {secondaryMenu}
                         </List>
                     </Drawer>
                     <Box
