@@ -13,11 +13,11 @@ export default function CurrencyFormat(props) {
             value={Math.abs(value)}           
             displayType="text"
             renderText={(formattedValue)=>{
-                return (<Box component={"span"} sx={{...disableAlignment&&{display: "flex", justifyContent: "end"},...value<0&&{color: colors.red[500]}}}>
+                return (<Box component={"span"} sx={{...disableAlignment?{display: "flex", justifyContent: "end"}:{},...value<0?{color: colors.red[500]}:{}}}>
                     {prefix&&
                         <Box component={"span"} sx={{px: 1, whiteSpace: "nowrap",...prefixSx}}> {prefix} </Box>
                     }
-                    <Box component={"span"} sx={value<0&&{color: colors.red[500]}}>{formattedValue}</Box>
+                    <Box component={"span"} sx={value<0?{color: colors.red[500]}:{}}>{formattedValue}</Box>
                 </Box>);
             }}/>
     )

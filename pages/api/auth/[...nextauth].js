@@ -22,7 +22,7 @@ const options = {
 
                 if (user?.accessToken) {
                     // Any object returned will be saved in `user` property of the JWT
-                    return Promise.resolve(user)
+                    return user;
                 } else {
                     // If you return null or false then the credentials will be rejected
                     //return Promise.resolve(null)
@@ -31,20 +31,29 @@ const options = {
                     return Promise.reject('/auth/signIn')        // Redirect to a URL
                 }
             },
-            callbacks: {
-                async session({ session, token, user }) {
-                    // Send properties to the client, like an access_token from a provider.
-                    session.accessToken = token.accessToken
-                    return session
-                }
-            },
-            pages: {
-                signIn: '/auth/signIn',
-                signOut: '/auth/signIn',
-                error: '/errorcito'
-            }
         }),
     ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if(user) {
+              return { ...token, user }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            return { ...session, user: token?.user };
+        }
+    },
+    pages: {
+        signIn: '/auth/signIn',
+        signOut: '/auth/signIn',
+        error: '/errorcito'
+    },
+    session: {
+        jwt: true,
+        maxAge: 30 * 24 * 60 * 60,
+        updateAge: 24 * 60 * 60,
+    }
 }
 
 export default (req, res) => NextAuth(req, res, options)

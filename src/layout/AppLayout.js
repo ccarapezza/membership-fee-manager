@@ -15,10 +15,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useEffect, useState } from 'react';
-import { mainMenu } from '../menu/listItems';
+import Menu, { mainMenu } from '../menu/Menu';
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import Loading from '../Loading';
+import { Avatar } from '@mui/material';
+import CodeloIcon from '../../assets/icons/CodeloIcon';
 
 function Copyright(props) {
     return (
@@ -133,6 +135,11 @@ export default function AppLayout({ children, pageTitle }) {
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
+                            <Avatar
+                                alt="User Avatar"
+                                src="https://revistathc.com/wp-content/uploads/2020/06/WhatsApp-Image-2020-06-18-at-16.32.09.jpeg"
+                                sx={{ml: 2, borderWidth:3, color: mdTheme.palette.primary, borderStyle: "solid"}}
+                            />
                         </Toolbar>
                     </AppBar>
                     <Drawer variant="permanent" open={open}>
@@ -144,13 +151,15 @@ export default function AppLayout({ children, pageTitle }) {
                                 px: [1],
                             }}
                         >
+                            <CodeloIcon width="36px"/>
+                            <Typography sx={{pl: 1}}>Portal de Socios</Typography>
                             <IconButton onClick={toggleDrawer}>
                                 <ChevronLeftIcon />
                             </IconButton>
                         </Toolbar>
                         <Divider />
                         <List component="nav">
-                            {mainMenu}
+                            <Menu/>
                         </List>
                     </Drawer>
                     <Box
