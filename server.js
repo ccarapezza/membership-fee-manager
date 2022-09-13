@@ -1,5 +1,5 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-const http = require('http');
+
 const { createServer } = require('https')
 const fs = require('fs');
 const { parse } = require('url')
@@ -22,8 +22,4 @@ app.prepare().then(() => {
     if (err) throw err
     console.log(`> Ready on https://localhost:${port}`)
   })
-
-  http.createServer(app).listen(3001, () => {
-    console.log(`Server is running on port 3001.`);
-  });
 })
